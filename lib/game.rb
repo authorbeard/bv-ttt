@@ -12,4 +12,8 @@ class Game
     [Player.new("x"), Player.new("o")]
   end
 
+  def move
+    
+  end
+
 end

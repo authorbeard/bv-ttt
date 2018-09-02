@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
-
 require 'pry'
-require_relative '../lib/game.rb'
+Dir["./lib/*.rb"].each do |f| require f }
 
-Game.new
+GameController.start
 
