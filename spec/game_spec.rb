@@ -37,5 +37,7 @@ RSpec.describe "./lib/game.rb" do
       expect(Game.new("pvc").type).to eq("pvc")
     end
 
+    
+
   end
 end
