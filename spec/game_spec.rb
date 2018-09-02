@@ -6,6 +6,7 @@ RSpec.describe "./lib/game.rb" do
       board[position] = nil
     end
     allow(Board).to receive(:new).and_return(empty_board)
+    allow(Player).to receive(:new).and_return([double(piece: "X"), double(piece: "O")])
     @game = Game.new
   end
 
