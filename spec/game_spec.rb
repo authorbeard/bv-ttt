@@ -6,7 +6,9 @@ RSpec.describe "./lib/game.rb" do
       board[position] = nil
     end
     allow(Board).to receive(:new).and_return(empty_board)
-    allow(Player).to receive(:new).and_return([double(piece: "X"), double(piece: "O")])
+    @player_x = double("player_x", piece: "X")
+    @player_o = double("player_o", piece: "O")
+    allow_any_instance_of(Game).to receive(:initialize_players).and_return([@player_x, @player_o])
     @game = Game.new
   end
 
@@ -18,7 +20,9 @@ RSpec.describe "./lib/game.rb" do
     end
 
     it "initializes with two players" do 
-      expect(@game.players.count).to eq 2
+      players = @game.players
+      expect(players.count).to eq 2
+      expect([@player_x, @player_o].all?{|p| players.include?(p)}).to be true
     end
 
 

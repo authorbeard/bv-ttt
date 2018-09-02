@@ -8,7 +8,7 @@ class Game
 
 
   def initialize_players
-    [Player.new("x"), Player.new("y")]
+    [Player.new("x"), Player.new("o")]
   end
 
 end
