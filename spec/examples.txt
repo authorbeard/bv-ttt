@@ -1,14 +1,16 @@
-example_id                         | status | run_time        |
----------------------------------- | ------ | --------------- |
-./spec/board_spec.rb[1:1:1]        | passed | 0.00044 seconds |
-./spec/board_spec.rb[1:1:2]        | passed | 0.00015 seconds |
-./spec/board_spec.rb[1:1:3]        | passed | 0.00059 seconds |
-./spec/board_spec.rb[1:1:4]        | passed | 0.00015 seconds |
-./spec/game_spec.rb[1:1:1]         | passed | 0.001 seconds   |
-./spec/game_spec.rb[1:1:2]         | passed | 0.00059 seconds |
-./spec/game_spec.rb[1:1:3]         | passed | 0.00062 seconds |
-./spec/game_spec.rb[1:1:4]         | passed | 0.00643 seconds |
-./spec/game_spec.rb[1:1:5]         | passed | 0.0007 seconds  |
-./spec/move_service_spec.rb[1:1:1] | passed | 0.00057 seconds |
-./spec/move_service_spec.rb[1:1:2] | passed | 0.00042 seconds |
-./spec/move_service_spec.rb[1:1:3] | passed | 0.00641 seconds |
+example_id                           | status | run_time        |
+------------------------------------ | ------ | --------------- |
+./spec/board_spec.rb[1:1:1]          | passed | 0.00044 seconds |
+./spec/board_spec.rb[1:1:2]          | passed | 0.00015 seconds |
+./spec/board_spec.rb[1:1:3]          | passed | 0.00059 seconds |
+./spec/board_spec.rb[1:1:4]          | passed | 0.00015 seconds |
+./spec/game_spec.rb[1:1:1]           | passed | 0.001 seconds   |
+./spec/game_spec.rb[1:1:2]           | passed | 0.00059 seconds |
+./spec/game_spec.rb[1:1:3]           | passed | 0.00062 seconds |
+./spec/game_spec.rb[1:1:4]           | passed | 0.00643 seconds |
+./spec/game_spec.rb[1:1:5]           | passed | 0.0007 seconds  |
+./spec/move_service_spec.rb[1:1:1:1] | passed | 0.00041 seconds |
+./spec/move_service_spec.rb[1:1:1:2] | passed | 0.00602 seconds |
+./spec/move_service_spec.rb[1:1:1:3] | passed | 0.00048 seconds |
+./spec/move_service_spec.rb[1:1:1:4] | passed | 0.00047 seconds |
+./spec/move_service_spec.rb[1:1:1:5] | passed | 0.00066 seconds |

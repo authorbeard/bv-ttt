@@ -6,9 +6,7 @@ class MoveService
   end
 
   def make_move(position, player)
-    if valid_move?(position) 
-      board.update_state(position, player.piece)
-    end
+    valid_move?(position) && !!board.update_state(position, player.piece)
   end
 
   def valid_move?(position)
