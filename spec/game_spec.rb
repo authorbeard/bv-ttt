@@ -25,6 +25,17 @@ RSpec.describe "./lib/game.rb" do
       expect([@player_x, @player_o].all?{|p| players.include?(p)}).to be true
     end
 
+    it "initializes with a game type" do 
+      expect(@game.type).not_to be nil
+    end
+
+    it "can be initialized as player-vs-player" do 
+      expect(Game.new("pvp").type).to eq("pvp")
+    end
+
+    it "can be initialized as player-vs-computer" do 
+      expect(Game.new("pvc").type).to eq("pvc")
+    end
 
   end
 end
