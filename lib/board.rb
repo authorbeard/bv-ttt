@@ -11,6 +11,10 @@ class Board
     end
   end
 
+  def positions
+    @positions ||= state.keys
+  end
+
   def move(position, player_piece)
     if valid_position?(position) && space_is_available(position)
       state[position] = player_piece
@@ -19,10 +23,14 @@ class Board
   end
 
   def valid_position?(position)
-    state.keys.include?(position)
+    positions.include?(position)
   end
 
   def space_is_available(position)
     state[position].empty?
+  end
+
+  def horizontal(position)
+    [+1, -1, +2, -2].map{|i| position + i if valid_position?(position + i)}
   end
 end

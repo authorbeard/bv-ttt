@@ -36,8 +36,5 @@ RSpec.describe "./lib/game.rb" do
     it "can be initialized as player-vs-computer" do 
       expect(Game.new("pvc").type).to eq("pvc")
     end
-
-
-
   end
 end
