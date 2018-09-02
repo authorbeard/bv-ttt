@@ -16,7 +16,7 @@ RSpec.describe "./lib/game.rb" do
     it "initializes with an empty board" do 
       expect(@game.board).to be_a(Hash)
       expect(@game.board.keys.count).to eq 9
-      expect(@game.board.values.uniq.all?(&:nil?)).to be true
+      expect(@game.board.values.uniq).to eq([""])
     end
 
     it "initializes with two players" do 
