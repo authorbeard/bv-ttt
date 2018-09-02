@@ -10,5 +10,12 @@ RSpec.describe "../lib/board.rb" do
 
       expect(Board.new.state).to eq(empty_board)
     end
+
+    it "stores players' moves" do 
+      board = Board.new
+      board.state[5]="X"
+
+      expect(board.state.values.all?(&:empty?)).to be false
+    end
   end
 end
