@@ -3,7 +3,7 @@ require "spec_helper"
 RSpec.describe "./lib/game.rb" do 
   before(:each) do 
     empty_board = (0..8).to_a.each_with_object({}) do | position, board|
-      board[position] = nil
+      board[position] = ""
     end
     allow(Board).to receive(:new).and_return(empty_board)
     @player_x = double("player_x", piece: "X")
@@ -37,7 +37,7 @@ RSpec.describe "./lib/game.rb" do
       expect(Game.new("pvc").type).to eq("pvc")
     end
 
-    
+
 
   end
 end
