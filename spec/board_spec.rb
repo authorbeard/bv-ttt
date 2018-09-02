@@ -11,24 +11,26 @@ RSpec.describe "../lib/board.rb" do
       expect(Board.new.state).to eq(empty_board)
     end
 
-    it "stores players' moves" do 
+    it "records players' moves" do 
       board = Board.new
-      board.state[5]="X"
+      board.move(5, "X")
 
       expect(board.state.values.all?(&:empty?)).to be false
     end
 
-    it "knows which board positions are valid" do 
+    it "does not allow moves to invalid positions" do 
       board = Board.new
-      expect(board.valid_move?(10)).to be false
+      expect{
+        board.move(10, "X")
+      }.not_to change(board, :state)
     end
 
-    it "does not allow a move to an occupied space" do 
+    it "does not allow moves to occupied spaces" do 
       board = Board.new
       board.state[5]="X"
 
       expect {
-        board.state[5]="0"
+        board.move(5, "O")
       }.not_to change(board, :state)
 
     end
