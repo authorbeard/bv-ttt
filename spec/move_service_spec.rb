@@ -1,46 +1,26 @@
 require "spec_helper"
 
-
 RSpec.describe "../lib/move_service.rb" do 
   describe MoveService do 
     before :each do 
-      @board = Board.new
-      @svc   = MoveService.new(board)
+      @svc      = MoveService.new
+      @player_x = double("player_x", piece: "X")
+      @player_o = double("player_o", piece: "O")
+    end
+   
+    it "updates the board's state" do 
+      expect_any_instance_of(Board).to receive(:update_state).with(4, @player_x.piece)
+      @svc.make_move(4, @player_x)
     end
 
-    context "valid moves" do 
-      it "updates the board's state" do 
-        expect{
-          @svc.make_move(8, "X")
-        }.to change(@board, :state)
-      end
-
-      it "checks that the position is valid" do 
-
-
-      end
-
-      it "checks that the position is unoccupied" do 
-
-
-      end
-
+    it "checks that the position is valid" do 
+      expect_any_instance_of(Board).to receive(:valid_position?)
+      @svc.make_move(4, @player_x)
     end
 
-    it "does not allow moves to invalid positions" do  
-      expect{
-        @vcs.move(10, "X")
-      }.not_to change(@board, :state)
+    it "checks that the position is unoccupied" do 
+      expect_any_instance_of(Board).to receive(:space_is_available?)
+      @svc.make_move(4, @player_x)
     end
-
-    it "does not allow moves to occupied spaces" do  
-      @board.state[5]="X"
-
-      expect {
-        @board.move(5, "O")
-      }.not_to change(@board, :state)
-    end
-
-
   end
 end
