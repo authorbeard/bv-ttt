@@ -1,3 +1,4 @@
 example_id                 | status | run_time        |
 -------------------------- | ------ | --------------- |
-./spec/game_spec.rb[1:1:1] | passed | 0.01312 seconds |
+./spec/game_spec.rb[1:1:1] | passed | 0.00817 seconds |
+./spec/game_spec.rb[1:1:2] | failed | 0.00061 seconds |
