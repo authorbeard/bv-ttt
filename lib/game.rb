@@ -1,9 +1,10 @@
 class Game
-  attr_accessor :board, :players
+  attr_accessor :board, :players, :type
 
-  def initialize
+  def initialize(type="pvc")
     @board   = Board.new
     @players = initialize_players
+    @type    = type
   end
 
 
