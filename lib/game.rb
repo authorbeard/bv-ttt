@@ -9,11 +9,15 @@ class Game
 
 
   def initialize_players
-    [Player.new("x"), Player.new("o")]
+    [Player.new(piece: "X"), Player.new(piece: "O")]
+  end
+
+  def update_player_names
+    
   end
 
   def move
-    
+
   end
 
 end
