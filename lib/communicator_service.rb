@@ -32,7 +32,7 @@ class CommunicatorService
   end
 
   def format_board(board)
-    board.each{|k,v| v.empty? ? board[k] = " " : next}
+    board.each{|k,v| v.nil? ? board[k] = " " : next}
     [ "#{board[0]} | #{board[1]} | #{board[2]}\n", 
       divider,
       "#{board[3]} | #{board[4]} | #{board[5]}\n",

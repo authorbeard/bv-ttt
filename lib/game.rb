@@ -1,5 +1,5 @@
 class Game
-  attr_accessor :board, :players, :type
+  attr_accessor :board, :players, :type, :last_player
 
   def initialize(type="pvc")
     @board   = Board.new
@@ -13,7 +13,11 @@ class Game
   end
 
   def over?
-    draw? || winner?
+    if turns_taken >= 5
+      winner? || draw?
+    else
+      false
+    end
   end
 
   def do_turn
@@ -25,12 +29,28 @@ class Game
     @state ||= board.state
   end
 
+  def winner?
+    WinChecker.winner?(board)
+  end
+
+  def draw?
+    if turns_taken == 9
+      true
+    else
+      WinChecker.draw?(board)
+    end
+  end
+
   def current_player
-    @current_player ||= first_or_next
+    first_or_next
+  end
+
+  def first_or_next
+    first_turn? ? players[rand(10) % 2] : next_player
   end
 
   def next_player
-    current_player.piece == "X" ? player_y : player_x
+    last_player.piece == "X" ? player_y : player_x
   end
 
   def player_x
@@ -41,12 +61,12 @@ class Game
     players.last
   end
 
-  def first_or_next
-    first_turn? ? players[rand(10) % 2] : next_player
-  end
-
   def first_turn?
     current_board.length == current_board.open_spaces.count
+  end
+
+  def turns_taken
+    current_board.taken_spaces.count
   end
 
 end

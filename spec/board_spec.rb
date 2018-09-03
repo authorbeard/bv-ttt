@@ -10,7 +10,7 @@ RSpec.describe "../lib/board.rb" do
 
     it "initializes in an empty state" do 
       empty_board = (0..8).to_a.each_with_object({}) do | position, board|
-        board[position] = ""
+        board[position] = nil
       end
 
       expect(@board.state).to eq(empty_board)
