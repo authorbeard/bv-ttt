@@ -21,8 +21,9 @@ class Game
   end
 
   def do_turn
-    p = current_player
-
+    position = STDIN.gets.strip.to_i
+    MoveService.new.make_move(position, current_player)
+    @last_player = current_player
   end
 
   def current_board
@@ -62,11 +63,11 @@ class Game
   end
 
   def first_turn?
-    current_board.length == current_board.open_spaces.count
+    current_board.length == board.open_spaces.count
   end
 
   def turns_taken
-    current_board.taken_spaces.count
+    board.taken_spaces.count
   end
 
 end

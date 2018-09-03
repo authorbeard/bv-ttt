@@ -32,7 +32,7 @@ class GameController
   def play
     until game_over
       clear_screen
-      puts next_turn
+      next_turn
     end
     puts thats_all_folks
   end

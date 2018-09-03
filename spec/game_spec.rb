@@ -1,44 +1,70 @@
 require "spec_helper"
 
-RSpec.describe "./lib/game.rb" do 
-  before(:each) do 
-    empty = Hash.new{|hash, key| hash[key] = "" }
-    initial_state = (0..8).to_a.map{|i| empty[i]}
-    empty_board = double(state: empty)
-    allow(Board).to receive(:new).and_return(empty_board)
-    @player_x = double("player_x", piece: "X")
-    @player_o = double("player_o", piece: "O")
-    allow_any_instance_of(Game).to receive(:initialize_players).and_return([@player_x, @player_o])
-    @game = Game.new
-  end
-
+RSpec.describe "./lib/game.rb" do
   describe Game do
-    it "initializes with an empty board" do 
-      expect(@game.board.state).to be_a(Hash)
-      expect(@game.board.state.keys.count).to eq 9
-      expect(@game.board.state.values.all?(&:empty?)).to be true
-    end
+    context "initialization" do 
+      before(:each) do 
+        empty = Hash.new{|hash, key| hash[key] = "" }
+        initial_state = (0..8).to_a.map{|i| empty[i]}
+        empty_board = double(state: empty)
+        allow(Board).to receive(:new).and_return(empty_board)
+        @player_x = double("player_x", piece: "X")
+        @player_o = double("player_o", piece: "O")
+        allow_any_instance_of(Game).to receive(:initialize_players).and_return([@player_x, @player_o])
+        @game = Game.new
+      end
 
-    it "initializes with two players" do 
-      players = @game.players
-      expect(players.count).to eq 2
-      expect([@player_x, @player_o].all?{|p| players.include?(p)}).to be true
-    end
+      it "initializes with an empty board" do 
+        expect(@game.board.state).to be_a(Hash)
+        expect(@game.board.state.keys.count).to eq 9
+        expect(@game.board.state.values.all?(&:empty?)).to be true
+      end
 
-    it "initializes with a game type" do 
-      expect(@game.type).not_to be nil
-    end
+      it "initializes with two players" do 
+        players = @game.players
+        expect(players.count).to eq 2
+        expect([@player_x, @player_o].all?{|p| players.include?(p)}).to be true
+      end
 
-    it "can be initialized as player-vs-player" do 
-      expect(Game.new("pvp").type).to eq("pvp")
-    end
+      it "initializes with a game type" do 
+        expect(@game.type).not_to be nil
+      end
 
-    it "can be initialized as player-vs-computer" do 
-      expect(Game.new("pvc").type).to eq("pvc")
+      it "can be initialized as player-vs-player" do 
+        expect(Game.new("pvp").type).to eq("pvp")
+      end
+
+      it "can be initialized as player-vs-computer" do 
+        expect(Game.new("pvc").type).to eq("pvc")
+      end
     end
 
     context "gameplay" do 
-      context "#over?" do 
+      it "sets the current player" do 
+        g = Game.new
+        allow(g.board).to receive(:open_spaces).and_return(0)
+        expect_any_instance_of(Game).to receive(:current_player)
+        g.do_turn
+      end
+
+      it "randomly selects the first player" do
+        allow_any_instance_of(Game).to receive(:first_turn?).and_return(true) 
+        first_5 = []
+        5.times{ first_5 << Game.new.current_player }
+
+        next_5 = []
+        5.times{ next_5 << Game.new.current_player }
+        expect(first_5).not_to eq next_5
+      end
+
+      it "toggles between players" do 
+        allow_any_instance_of(Game).to receive(:first_turn?).and_return(false)
+        g = Game.new
+        g.last_player = g.player_x
+        expect(g.current_player).not_to eq(g.player_x)
+      end
+
+      describe "#over?" do 
         it "returns false if there haven't been enough moves to win" do 
           g = Game.new
           allow_any_instance_of(Game).to receive(:turns_taken).and_return(4)
@@ -70,32 +96,25 @@ RSpec.describe "./lib/game.rb" do
         end
       end
 
-      it "sets the current player" do 
-        g = Game.new
-        allow(g.board).to receive(:open_spaces).and_return(0)
-        expect_any_instance_of(Game).to receive(:current_player)
-        g.do_turn
+      describe "#do_turn" do 
+        it "updates the board" do 
+          player = Player.new
+          allow(STDIN).to receive(:gets).and_return("1\n")
+          allow_any_instance_of(Game).to receive(:current_player).and_return(player)
+          g = Game.new
+          expect_any_instance_of(MoveService).to receive(:make_move).with(1, player)
+          g.do_turn
+        end
+
+        it "stores the last player" do 
+          allow(STDIN).to receive(:gets).and_return("1\n")
+          g = Game.new
+          allow_any_instance_of(MoveService).to receive(:make_move).with(any_args).and_return("")
+          expect{
+            g.do_turn
+          }.to change(g, :last_player)
+        end
       end
-
-      it "randomly selects the first player" do
-        allow_any_instance_of(Game).to receive(:first_turn?).and_return(true) 
-        first_5 = []
-        5.times{ first_5 << Game.new.current_player }
-
-        next_5 = []
-        5.times{ next_5 << Game.new.current_player }
-        expect(first_5).not_to eq next_5
-      end
-
-      it "toggles between players" do 
-        allow_any_instance_of(Game).to receive(:first_turn?).and_return(false)
-        g = Game.new
-        g.last_player = @player_x
-        expect(g.current_player).not_to eq(@player_x)
-      end
-
-
-
     end
   end
 end
