@@ -48,10 +48,31 @@ RSpec.describe "../lib/win_checker.rb" do
         expect(svc.horizontal?).to be true
       end
 
+      it "returns false for an empty board" do 
+        expect(WinChecker.new(@board).horizontal?).to be false
+      end
+
       it "returns false when there are no matches" do
           @board.update_state(1, "X")
           svc = WinChecker.new(@board)
           expect(svc.horizontal?).to be false
+      end
+
+      it "handles a messy board with no winner" do 
+        @board = Board.new
+        [4, 5, 6].each{|pos| @board.update_state(pos, "O")}
+        [0, 3, 7].each{|pos| @board.update_state(pos, "X")}
+
+        svc = WinChecker.new(@board)
+        expect(svc.horizontal?).to be false
+      end
+
+      it "handles a messy board with a winner" do 
+        [4, 5, 1].each{|pos| @board.update_state(pos, "O")}
+        [0, 3, 2].each{|pos| @board.update_state(pos, "X")}
+        
+        svc = WinChecker.new(@board)
+        expect(svc.horizontal?).to be true
       end
 
       it "returns true for a match on any line" do 

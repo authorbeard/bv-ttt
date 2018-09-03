@@ -40,18 +40,17 @@ class WinChecker
     return false if @eliminated == board.positions
     move_over(position) if @eliminated.include?(position)
     move_down(position) if board.player_at(position).nil?
-      if match?(position, position + 1)
-        if match?(position, @prev_match)
-          @winner = board.player_at(position)
-          return true
-        end
-        @prev_match = position
-        horiz_match(position + 1)
-      end
+
+    if row_match?(position) 
+      @winner = board.player_at(position)
+      return true
+    else
+      move_down(position)
+    end
   end
 
   def move_down(position)
-    @eliminated += board.horizontal.select{|r| r.include?(position)}.flatten
+    @eliminated += board.horizontals.select{|r| r.include?(position)}.flatten
     horiz_match(position + 3)
   end
 
@@ -59,10 +58,9 @@ class WinChecker
     horiz_match(position + 1)
   end
 
-  def match?(position_1, position_2)
-    players = [position_1, position_2].map{|pos| board.player_at(pos) }
+  def row_match?(position)
+    row     = board.horizontals.select{|r| r.include?(position) }.flatten
+    players = row.map{|pos| board.player_at(pos) }
     players.uniq.length == 1
   end
-
-
 end
