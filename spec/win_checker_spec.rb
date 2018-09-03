@@ -83,12 +83,25 @@ RSpec.describe "../lib/win_checker.rb" do
           svc = WinChecker.new(board_2)
           expect(svc.horizontal?).to be true
         end
+      end
+    end
 
+    describe "#vertical?" do 
+      it "returns false for an empty board" do 
+        svc = WinChecker.new(@board)
+        expect(svc.vertical?).to be false
       end
 
-      it "returns false when the spaces in a row are not taken by identical pieces" do 
-
+      it "returns true for a match in any column" do 
+        verticals = @board.verticals
+        verticals.each do |row|
+          board_2 = Board.new
+          row.each{|p| board_2.update_state(p, "O")}
+          svc = WinChecker.new(board_2)
+          expect(svc.horizontal?).to be true
+        end
       end
+
     end
   end
 end

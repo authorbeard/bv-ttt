@@ -46,4 +46,12 @@ class Board
       [6, 7, 8] 
     ].freeze
   end
+
+  def verticals
+    [
+      [0, 3, 6], 
+      [1, 4, 7],
+      [2, 5, 8]
+    ].freeze
+  end
 end
