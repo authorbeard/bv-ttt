@@ -67,16 +67,16 @@ RSpec.describe "../lib/win_checker.rb" do
         expect(svc.horizontal?).to be false
       end
 
-      it "handles a messy board with a winner" do 
-        [4, 5, 1].each{|pos| @board.update_state(pos, "O")}
+      it "returns false with only a vertical winner" do 
+        [4, 7, 1].each{|pos| @board.update_state(pos, "O")}
         [0, 3, 2].each{|pos| @board.update_state(pos, "X")}
         
         svc = WinChecker.new(@board)
-        expect(svc.horizontal?).to be true
+        expect(svc.horizontal?).to be false
       end
 
       it "returns true for a match on any line" do 
-        horizontals = @board.horizontal
+        horizontals = @board.horizontals
         horizontals.each do |row|
           board_2 = Board.new
           row.each{|p| board_2.update_state(p, "O")}

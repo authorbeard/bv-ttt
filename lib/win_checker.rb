@@ -37,9 +37,10 @@ class WinChecker
   def horiz_match(position)
     return true if @winner
     return false unless board.valid_position?(position) 
-    return false if @eliminated == board.positions
-    move_over(position) if @eliminated.include?(position)
+    return false if @eliminated.uniq.count == board.positions.count
     move_down(position) if board.player_at(position).nil?
+    move_over(position) if @eliminated.include?(position)
+
 
     if row_match?(position) 
       @winner = board.player_at(position)
