@@ -25,10 +25,11 @@ RSpec.describe "../lib/win_checker.rb" do
 
     describe "#horizontal?" do 
       before :each do 
-        @rows = [ [0, 1, 2], 
-               [3, 4, 5],
-               [6, 7, 8]
-             ]
+        @rows = [ 
+                  [0, 1, 2], 
+                  [3, 4, 5],
+                  [6, 7, 8]
+                ]
       end
 
       it "returns true when all horizontal spaces are taken by the same player" do 
@@ -51,6 +52,17 @@ RSpec.describe "../lib/win_checker.rb" do
           @board.update_state(1, "X")
           svc = WinChecker.new(@board)
           expect(svc.horizontal?).to be false
+      end
+
+      it "returns true for a match on any line" do 
+        horizontals = @board.horizontal
+        horizontals.each do |row|
+          board_2 = Board.new
+          row.each{|p| board_2.update_state(p, "O")}
+          svc = WinChecker.new(board_2)
+          expect(svc.horizontal?).to be true
+        end
+
       end
 
       it "returns false when the spaces in a row are not taken by identical pieces" do 

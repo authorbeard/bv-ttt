@@ -28,11 +28,11 @@ class Board
   end
 
   def open_spaces
-    state.values.select(&:nil?)
+    state.select{|position, piece| piece.nil?}
   end
 
   def taken_spaces
-    state.values.select{|s| !s.nil? }
+    state.select{|position, piece| piece.present?}
   end
 
   def player_at(position) 
