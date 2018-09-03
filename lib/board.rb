@@ -35,15 +35,15 @@ class Board
     state.values.select{|s| !s.nil? }
   end
 
+  def player_at(position) 
+    state[position]
+  end
+
   def horizontal
-
-  end
-
-  def vertical
-
-  end
-
-  def diagonal
-
+    [ 
+      [0, 1, 2],
+      [3, 4, 5], 
+      [6, 7, 8] 
+    ]
   end
 end
