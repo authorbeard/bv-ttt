@@ -17,7 +17,7 @@ class Game
   end
 
   def do_turn
-binding.pry
+    p = current_player
 
   end
 

@@ -36,5 +36,14 @@ RSpec.describe "./lib/game.rb" do
     it "can be initialized as player-vs-computer" do 
       expect(Game.new("pvc").type).to eq("pvc")
     end
+
+    context "gameplay" do 
+      it "sets the current player" do 
+        g = Game.new
+        expect_any_instance_of(Game).to receive(:current_player)
+        g.do_turn
+      end
+
+    end
   end
 end
