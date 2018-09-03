@@ -26,4 +26,8 @@ class Board
   def space_is_available?(position)
     state[position].empty?
   end
+
+  def open_spaces
+    state.values.select(&:empty?)
+  end
 end

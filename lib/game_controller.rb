@@ -12,10 +12,10 @@ class GameController
   def start
     clear_screen
     puts @comms.main_menu
-    new_game
+    set_up_game
   end
 
-  def new_game
+  def set_up_game
     game_type = STDIN.gets.strip
 
     if game_type == "1"
@@ -23,13 +23,36 @@ class GameController
     else
       @game = Game.new("pvp")
       puts @comms.player_options_menu
+      update_players
     end
 
-    turn
+    play
   end
 
-  def turn
+  def play
+    until game_over
+      clear_screen
+      puts next_turn
+    end
+    puts thats_all_folks
+  end
 
+  def update_players
+    player_names = STDIN.gets.strip.split(",")
+    game.players.each_with_index{|player, i| player.name = player_names[i]}
+  end
+
+  def game_over
+    game.over?
+  end
+
+  def next_turn
+    puts @comms.next_turn(game)
+    game.do_turn
+  end
+
+  def thats_all_folks
+    puts "DONE"
   end
 
 
