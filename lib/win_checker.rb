@@ -6,14 +6,12 @@ class WinChecker
   end
 
   def self.draw?(board)
-
+    new(board).tap{|svc| svc.draw?}
   end
 
   def initialize(board)
     @board      = board
-    @eliminated = board.open_spaces.keys
     @winner     = nil
-    @prev_match = nil
   end
 
   def winner?
@@ -40,5 +38,15 @@ class WinChecker
   def match?(positions)
     players  = positions.map{|pos| board.player_at(pos) }.uniq
     players.first.nil? ? false : players.length == 1
+  end
+
+  def draw?
+    eliminated = ["horizontal", "vertical", "diagonal"].map do |type|
+                    board.send(type).all? do |positions|
+                      players  = positions.map{|pos| board.player_at(pos) }.uniq
+                      players.compact.length > 1
+                    end
+                  end
+    eliminated.all?{|result| result == true }
   end
 end

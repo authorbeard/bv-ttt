@@ -161,5 +161,14 @@ RSpec.describe "../lib/win_checker.rb" do
         end
       end
     end
+
+    describe "#draw?" do 
+      it "returns true when none of the match types are possible" do 
+        [0, 4, 6, 5].each{|pos| @board.update_state(pos, "O")}
+        [2, 8, 7, 3].each{|pos| @board.update_state(pos, "X")}
+        svc = WinChecker.new(@board)
+        expect(svc.draw?).to be true
+      end
+    end
   end
 end
