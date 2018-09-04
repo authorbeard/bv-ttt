@@ -19,8 +19,12 @@ class Board
       state[position] = player_piece
   end
 
+  def valid_move?(position)
+    valid_position?(position) && space_is_available?(position)
+  end
+
   def valid_position?(position)
-    positions.include?(position)
+    state.member?(position)
   end
 
   def space_is_available?(position)
@@ -28,11 +32,11 @@ class Board
   end
 
   def open_spaces
-    state.select{|position, piece| piece.nil?}
+    state.select{|position, piece| piece.nil? }
   end
 
   def taken_spaces
-    state.select{|position, piece| piece.present?}
+    state.select{|position, piece| !!piece }
   end
 
   def player_at(position) 

@@ -1,6 +1,5 @@
 require "spec_helper"
 
-
 RSpec.describe "../lib/board.rb" do
   describe Board do 
 
@@ -19,7 +18,7 @@ RSpec.describe "../lib/board.rb" do
     it "records players' moves" do  
       @board.update_state(5, "X")
 
-      expect(@board.state.values.all?(&:empty?)).to be false
+      expect(@board.state.values.all?(&:nil?)).to be false
     end
 
     it "can check for a valid position" do 

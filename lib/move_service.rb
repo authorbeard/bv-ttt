@@ -1,15 +1,11 @@
 class MoveService
   attr_accessor :board
 
-  def initialize(board=nil)
-    @board = board || Board.new
+  def self.make_move(board, position, player)
+    board.valid_move?(position) && !!board.update_state(position, player.piece)
   end
 
-  def make_move(position, player)
-    valid_move?(position) && !!board.update_state(position, player.piece)
-  end
-
-  def valid_move?(position)
+  def self.valid_move?(position)
     board.valid_position?(position) && board.space_is_available?(position)
   end
 end

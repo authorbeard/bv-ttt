@@ -1,8 +1,5 @@
 class CommunicatorService
 
-  # def initialize
-  # end
-
   def main_menu
     [ border,
       "TICTACTOE OMG OMG\n\n",
@@ -24,21 +21,28 @@ class CommunicatorService
   end
 
   def next_turn(game)
-    board = format_board(game.current_board)
-    [ border,
-      board,
-      border,
-      "Your turn, #{game.current_player.name}\n"].join.freeze
+    board = format_board(game.current_board.dup)
+    [ board,
+      "Your turn, #{game.current_player.name}. Pick a space.\n\n"].join.freeze
   end
 
   def format_board(board)
-    board.each{|k,v| v.nil? ? board[k] = " " : next}
+    board.each{|k,v| v.nil? ? board[k] = k + 1 : next}
     [ "#{board[0]} | #{board[1]} | #{board[2]}\n", 
       divider,
       "#{board[3]} | #{board[4]} | #{board[5]}\n",
       divider,
-      "#{board[6]} | #{board[7]} | #{board[8]}"
-    ].join.freeze
+      "#{board[6]} | #{board[7]} | #{board[8]}\n"
+    ].join
+  end
+
+  def game_over(message)
+    if message == "draw"
+      "Welcome to life: NOBODY WINS"
+    else
+      "Player #{message} WINS!"
+    end
+
   end
 
   def border

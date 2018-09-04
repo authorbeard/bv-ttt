@@ -30,7 +30,7 @@ class GameController
   end
 
   def play
-    until game_over
+    until game.over?
       clear_screen
       next_turn
     end
@@ -42,17 +42,13 @@ class GameController
     game.players.each_with_index{|player, i| player.name = player_names[i]}
   end
 
-  def game_over
-    game.over?
-  end
-
   def next_turn
     puts @comms.next_turn(game)
     game.do_turn
   end
 
   def thats_all_folks
-    puts "DONE"
+    puts @comms.game_over(game.winner || "draw")
   end
 
 

@@ -41,9 +41,11 @@ RSpec.describe "./lib/game.rb" do
 
     context "gameplay" do 
       it "sets the current player" do 
+        allow(STDIN).to receive(:gets).and_return("5")
         g = Game.new
         allow(g.board).to receive(:open_spaces).and_return(0)
-        expect_any_instance_of(Game).to receive(:current_player)
+        allow_any_instance_of(MoveService).to receive(:make_move).with(any_args).and_return("")
+        expect_any_instance_of(Game).to receive(:current_player).twice
         g.do_turn
       end
 

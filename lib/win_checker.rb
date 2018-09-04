@@ -1,12 +1,12 @@
 class WinChecker
-  attr_reader :board, :winner
+  attr_reader :board, :winner, :draw
 
   def self.winner?(board)
-    new(board).tap{|svc| svc.winner?}
+    new(board).tap{|svc| svc.winner?}.winner
   end
 
   def self.draw?(board)
-    new(board).tap{|svc| svc.draw?}
+    new(board).tap{|svc| svc.draw?}.draw
   end
 
   def initialize(board)
@@ -15,9 +15,7 @@ class WinChecker
   end
 
   def winner?
-    if horizontal? || vertical? || diagonal?
-      @winner
-    end
+    @winner = horizontal? || vertical? || diagonal?
   end
 
   def horizontal?
@@ -47,6 +45,6 @@ class WinChecker
                       players.compact.length > 1
                     end
                   end
-    eliminated.all?{|result| result == true }
+    @draw = eliminated.all?{|result| result == true }
   end
 end

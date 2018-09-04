@@ -1,10 +1,11 @@
 class Game
-  attr_accessor :board, :players, :type, :last_player
+  attr_accessor :board, :players, :type, :winner, :current_player, :last_player
 
   def initialize(type="pvc")
     @board   = Board.new
     @players = initialize_players
     @type    = type
+    set_players
   end
 
 
@@ -13,17 +14,13 @@ class Game
   end
 
   def over?
-    if turns_taken >= 5
-      winner? || draw?
-    else
-      false
-    end
+    winner? || draw?
   end
 
   def do_turn
-    position = STDIN.gets.strip.to_i
-    MoveService.new.make_move(position, current_player)
-    @last_player = current_player
+    position = STDIN.gets.strip.to_i - 1
+    MoveService.make_move(board, position, current_player)
+    toggle_players
   end
 
   def current_board
@@ -31,7 +28,7 @@ class Game
   end
 
   def winner?
-    WinChecker.winner?(board)
+    @winner = WinChecker.winner?(board)
   end
 
   def draw?
@@ -42,16 +39,15 @@ class Game
     end
   end
 
-  def current_player
-    first_or_next
+  def set_players
+    first_index = rand(10) % 2
+    players         = @players.dup
+    @current_player = players.slice!(first_index, 1).first
+    @last_player    = players.shift
   end
 
-  def first_or_next
-    first_turn? ? players[rand(10) % 2] : next_player
-  end
-
-  def next_player
-    last_player.piece == "X" ? player_y : player_x
+  def toggle_players
+    @last_player, @current_player = @current_player, @last_player
   end
 
   def player_x
@@ -67,7 +63,7 @@ class Game
   end
 
   def turns_taken
-    board.taken_spaces.count
+    board.taken_spaces.count + 1
   end
 
 end
