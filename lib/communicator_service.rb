@@ -9,6 +9,13 @@ class CommunicatorService
       border].join.freeze
   end
 
+  def player_name_menu
+    [ border, 
+      "Okay, waddaya wanna be called?.\n",
+      "(just hit enter if yer fine with a default name\n",
+      border].join.freeze
+  end
+
   def player_options_menu
     [ border, 
       "This is real easy.\n",

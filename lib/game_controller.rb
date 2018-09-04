@@ -20,6 +20,8 @@ class GameController
 
     if game_type == "1"
       @game = Game.new("pvc")
+      puts @comms.player_name_menu
+      update_players
     else
       @game = Game.new("pvp")
       puts @comms.player_options_menu
