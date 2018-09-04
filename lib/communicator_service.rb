@@ -27,6 +27,13 @@ class CommunicatorService
       border].join.freeze
   end
 
+  def computer_turn(board, position)
+    board = format_board(board.dup)
+    [ board, 
+      "Computer selects #{position + 1}"
+    ].join.freeze
+  end
+
   def next_turn(game)
     board = format_board(game.current_board.dup)
     [ board,
@@ -39,7 +46,7 @@ class CommunicatorService
       divider,
       "#{board[3]} | #{board[4]} | #{board[5]}\n",
       divider,
-      "#{board[6]} | #{board[7]} | #{board[8]}\n"
+      "#{board[6]} | #{board[7]} | #{board[8]}\n\n"
     ].join
   end
 

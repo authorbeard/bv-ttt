@@ -16,7 +16,7 @@ class Board
   end
 
   def update_state(position, player_piece)
-      state[position] = player_piece
+    state[position] = player_piece
   end
 
   def valid_move?(position)

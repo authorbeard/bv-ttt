@@ -20,10 +20,12 @@ class GameController
 
     if game_type == "1"
       @game = Game.new("pvc")
+      clear_screen
       puts @comms.player_name_menu
       update_players
     else
       @game = Game.new("pvp")
+      clear_screen
       puts @comms.player_options_menu
       update_players
     end
@@ -41,16 +43,36 @@ class GameController
 
   def update_players
     player_names = STDIN.gets.strip.split(",")
-    game.players.each_with_index{|player, i| player.name = player_names[i]}
+    game.players.each_with_index do |player, i| 
+      player.name = player_names[i] unless player_names[i].nil?
+    end
   end
 
   def next_turn
+    if computer_is_next
+      clear_screen
+      puts computer_turn
+      sleep 2
+    end
+
+    clear_screen
     puts @comms.next_turn(game)
     game.do_turn
   end
 
   def thats_all_folks
     puts @comms.game_over(game.winner || "draw")
+  end
+
+  def computer_is_next
+    game.last_player == game.player_x && game.type == "pvc"
+  end
+
+  def computer_turn
+    available = game.board.open_spaces.keys
+    selected  = available[rand(available.length)]
+    game.do_turn(selected)
+    @comms.computer_turn(game.current_board, selected)
   end
 
 

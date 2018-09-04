@@ -17,8 +17,8 @@ class Game
     winner? || draw?
   end
 
-  def do_turn
-    position = STDIN.gets.strip.to_i - 1
+  def do_turn(selected_position = nil)
+    position = selected_position || STDIN.gets.strip.to_i - 1
     MoveService.make_move(board, position, current_player)
     toggle_players
   end
@@ -54,7 +54,7 @@ class Game
     players.first
   end
 
-  def player_y
+  def player_o
     players.last
   end
 
@@ -65,5 +65,4 @@ class Game
   def turns_taken
     board.taken_spaces.count + 1
   end
-
 end
