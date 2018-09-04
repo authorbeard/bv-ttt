@@ -44,8 +44,8 @@ RSpec.describe "./lib/game.rb" do
         allow(STDIN).to receive(:gets).and_return("5")
         g = Game.new
         allow(g.board).to receive(:open_spaces).and_return(0)
-        allow_any_instance_of(MoveService).to receive(:make_move).with(any_args).and_return("")
-        expect_any_instance_of(Game).to receive(:current_player).twice
+        allow(MoveService).to receive(:make_move).with(any_args).and_return("")
+        expect_any_instance_of(Game).to receive(:current_player)
         g.do_turn
       end
 
@@ -60,17 +60,18 @@ RSpec.describe "./lib/game.rb" do
       end
 
       it "toggles between players" do 
-        allow_any_instance_of(Game).to receive(:first_turn?).and_return(false)
         g = Game.new
-        g.last_player = g.player_x
-        expect(g.current_player).not_to eq(g.player_x)
+        lp = g.last_player
+        cp = g.current_player
+        g.toggle_players
+        expect(g.current_player).not_to eq(cp)
       end
 
       describe "#over?" do 
         it "returns false if there haven't been enough moves to win" do 
           g = Game.new
           allow_any_instance_of(Game).to receive(:turns_taken).and_return(4)
-          allow_any_instance_of(Game).to receive(:winner?).and_return(true)
+          allow_any_instance_of(Game).to receive(:winner?).and_return(false)
           expect(g.over?).to be false
         end
 
@@ -104,14 +105,14 @@ RSpec.describe "./lib/game.rb" do
           allow(STDIN).to receive(:gets).and_return("1\n")
           allow_any_instance_of(Game).to receive(:current_player).and_return(player)
           g = Game.new
-          expect_any_instance_of(MoveService).to receive(:make_move).with(1, player)
+          expect(MoveService).to receive(:make_move).with(g.board, 0, player)
           g.do_turn
         end
 
         it "stores the last player" do 
           allow(STDIN).to receive(:gets).and_return("1\n")
           g = Game.new
-          allow_any_instance_of(MoveService).to receive(:make_move).with(any_args).and_return("")
+          allow(MoveService).to receive(:make_move).with(any_args).and_return("")
           expect{
             g.do_turn
           }.to change(g, :last_player)
