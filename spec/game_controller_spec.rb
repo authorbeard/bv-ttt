@@ -72,8 +72,10 @@ RSpec.describe "../lib/game_controller.rb" do
 
       it "starts the game already" do 
         allow(STDIN).to receive(:gets).and_return("1\n")
+        allow_any_instance_of(Game).to receive(:over?).and_return(true)
+        allow_any_instance_of(GameController).to receive(:computer_is_next).and_return(false)
         allow_any_instance_of(Game).to receive(:do_turn).with(any_args).and_return("")
-        expect_any_instance_of(GameController).to receive(:play)
+        expect_any_instance_of(GameController).to receive(:play).at_least(:once)
         ctrl = GameController.start
       end
     end
@@ -91,7 +93,7 @@ RSpec.describe "../lib/game_controller.rb" do
         allow_any_instance_of(Game).to receive(:current_player).and_return(double(name: "Player X", piece: "X"))
         allow_any_instance_of(CommunicatorService).to receive(:next_turn).with(any_args).and_return(true)
         expect_any_instance_of(CommunicatorService).to receive(:next_turn).and_return("")
-        expect_any_instance_of(Game).to receive(:do_turn).and_return(false)
+        expect_any_instance_of(Game).to receive(:do_turn).at_least(:once).and_return(false)
         ctrl = GameController.new
         ctrl.game = Game.new("pvc")
         ctrl.next_turn
@@ -117,7 +119,6 @@ RSpec.describe "../lib/game_controller.rb" do
         ctrl.next_turn
 
         expect(ctrl.game.last_player).to be(ctrl.game.player_o)
-
       end
     end
   end
