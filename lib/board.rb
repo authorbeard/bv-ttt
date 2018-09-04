@@ -54,4 +54,8 @@ class Board
       [2, 5, 8]
     ].freeze
   end
+
+  def diagonal
+    [[0, 4, 8], [2, 4, 6]].freeze
+  end
 end
