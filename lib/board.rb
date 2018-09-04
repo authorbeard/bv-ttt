@@ -39,7 +39,7 @@ class Board
     state[position]
   end
 
-  def horizontals
+  def horizontal
     [ 
       [0, 1, 2],
       [3, 4, 5], 
@@ -47,7 +47,7 @@ class Board
     ].freeze
   end
 
-  def verticals
+  def vertical
     [
       [0, 3, 6], 
       [1, 4, 7],

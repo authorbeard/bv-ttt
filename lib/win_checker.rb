@@ -23,13 +23,13 @@ class WinChecker
   end
 
   def horizontal?
-    @dir = "horiz"
+    @dir = "horizontal"
     traverse(0)
   end
 
   def vertical?
-    @dir = "vert"
-    traverse("vertical")
+    @dir = "vertical"
+    traverse(0)
   end
 
   def diagonal?
@@ -42,8 +42,7 @@ class WinChecker
     send("eliminate_#{@dir}", position) if board.player_at(position).nil?
     next_position(position) if @eliminated.include?(position)
 
-
-    if row_match?(position) 
+    if match?(position) 
       @winner = board.player_at(position)
       return true
     else
@@ -51,13 +50,13 @@ class WinChecker
     end
   end
 
-  def eliminate_horiz(position)
-    @eliminated += board.horizontals.select{|r| r.include?(position)}.flatten
+  def eliminate_horizontal(position)
+    @eliminated += board.horizontal.select{|r| r.include?(position)}.flatten
     traverse(position + 3)
   end
 
-  def eliminate_vert(position)
-    @eliminated += board.verticalss.select{|r| r.include?(position)}.flatten
+  def eliminate_vertical(position)
+    @eliminated += board.vertical.select{|r| r.include?(position)}.flatten
     traverse(position + 1)
   end
 
@@ -66,9 +65,9 @@ class WinChecker
     traverse(position + step)
   end
 
-  def row_match?(position)
-    row     = board.horizontals.select{|r| r.include?(position) }.flatten
-    players = row.map{|pos| board.player_at(pos) }
+  def match?(position)
+    matchset = board.send(@dir).select{|r| r.include?(position) }.flatten
+    players  = matchset.map{|pos| board.player_at(pos) }
     players.uniq.length == 1
   end
 
@@ -78,9 +77,9 @@ class WinChecker
 
   def steps
     {
-      "horiz" => 1,
-      "vert"  => 3, 
-      "diag"  => 4
+      "horizontal" => 1,
+      "vertical"   => 3, 
+      "diagonal"   => 4
     }.freeze
   end
 end

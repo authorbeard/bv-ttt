@@ -76,8 +76,8 @@ RSpec.describe "../lib/win_checker.rb" do
       end
 
       it "returns true for a match on any line" do 
-        horizontals = @board.horizontals
-        horizontals.each do |row|
+        horizontal = @board.horizontal
+        horizontal.each do |row|
           board_2 = Board.new
           row.each{|p| board_2.update_state(p, "O")}
           svc = WinChecker.new(board_2)
@@ -93,12 +93,12 @@ RSpec.describe "../lib/win_checker.rb" do
       end
 
       it "returns true for a match in any column" do 
-        verticals = @board.verticals
-        verticals.each do |row|
+        vertical = @board.vertical
+        vertical.each do |row|
           board_2 = Board.new
           row.each{|p| board_2.update_state(p, "O")}
           svc = WinChecker.new(board_2)
-          expect(svc.horizontal?).to be true
+          expect(svc.vertical?).to be true
         end
       end
 
