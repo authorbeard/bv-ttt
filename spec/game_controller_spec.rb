@@ -89,9 +89,9 @@ RSpec.describe "../lib/game_controller.rb" do
       end
 
       it "displays the board and alerts the game to expect another turn" do 
-        allow_any_instance_of(Game).to receive(:current_board).and_return({})
-        allow_any_instance_of(Game).to receive(:current_player).and_return(double(name: "Player X", piece: "X"))
-        allow_any_instance_of(CommunicatorService).to receive(:next_turn).with(any_args).and_return(true)
+        # allow_any_instance_of(Game).to receive(:current_board).and_return({})
+        # allow_any_instance_of(Game).to receive(:current_player).and_return(double(name: "Player X", piece: "X"))
+        # allow_any_instance_of(CommunicatorService).to receive(:next_turn).with(any_args).and_return(true)
         expect_any_instance_of(CommunicatorService).to receive(:next_turn).and_return("")
         expect_any_instance_of(Game).to receive(:do_turn).at_least(:once).and_return(false)
         ctrl = GameController.new

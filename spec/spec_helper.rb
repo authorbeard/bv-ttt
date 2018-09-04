@@ -17,6 +17,8 @@ require "pry"
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 RSpec.configure do |config|
+  config.before(:all, &:silence_output)
+  config.after(:all, &:store_results)
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
@@ -60,7 +62,7 @@ RSpec.configure do |config|
   # Allows RSpec to persist some state between runs in order to support
   # the `--only-failures` and `--next-failure` CLI options. We recommend
   # you configure your source control system to ignore this file.
-  config.example_status_persistence_file_path = "spec/examples.txt"
+  config.example_status_persistence_file_path = "tmp/examples.txt"
 
   # Limits the available syntax to the non-monkey patched syntax that is
   # recommended. For more details, see:
@@ -99,5 +101,24 @@ RSpec.configure do |config|
   # test failures related to randomization by passing the same `--seed` value
   # as the one that triggered the failure.
   Kernel.srand config.seed
+
+end
+
+public
+
+def silence_output
+  # Store the original stderr and stdout in order to restore them later
+  @original_stderr = $stderr
+  @original_stdout = $stdout
+
+  # Redirect stderr and stdout
+  $stderr = File.new(File.join('./tmp', 'output.txt'), 'w')
+  $stdout = File.new(File.join('./tmp', 'output.txt'), 'w')
+end
+
+def store_results
+  File.open("./tmp/results.txt", "a") do |file|
+    file.write(File.read("./tmp/examples.txt"))
+  end
 
 end
