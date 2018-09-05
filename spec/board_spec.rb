@@ -8,11 +8,20 @@ RSpec.describe "../lib/board.rb" do
     end
 
     it "initializes in an empty state" do 
-      empty_board = (0..8).to_a.each_with_object({}) do | position, board|
+      empty_board = (1..9).to_a.each_with_object({}) do | position, board|
         board[position] = nil
       end
 
       expect(@board.state).to eq(empty_board)
+    end
+
+    it "initialized at 3X3 if no size is given" do 
+      expect(@board.state.length).to eq 9
+    end
+
+    it "can be initialized at any size 3x3 or more" do 
+      state = Board.new(5).state
+      expect(state.length).to eq 25
     end
 
     it "records players' moves" do  
@@ -30,6 +39,26 @@ RSpec.describe "../lib/board.rb" do
       @board.state[0] = "O"
       expect(@board.space_is_available?(0)).to be false
       expect(@board.space_is_available?(8)).to be true
+    end
+
+    it "calculates the row for any position" do 
+      [1, 2, 3].each do |pos|
+        expect(@board.row(pos)).to eq 1
+      end
+
+      [7, 8, 9].each do |pos|
+        expect(@board.row(pos)).to eq 3
+      end
+    end
+
+    it "calculates the column for any position" do 
+      [2, 5, 8].each do |pos|
+        expect(@board.col(pos)).to eq 2
+      end
+
+      [3, 6, 9].each do |pos|
+        expect(@board.col(pos)).to eq 3
+      end
     end
   end
 end

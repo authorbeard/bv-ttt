@@ -1,12 +1,13 @@
 class Board
-  attr_accessor :state
+  attr_accessor :state, :size
 
-  def initialize
+  def initialize(size = 3)
+    @size = size
     @state = empty_state
   end
 
   def empty_state 
-    (0..8).to_a.each_with_object({}) do | position, board|
+    (1..@size**2).to_a.each_with_object({}) do | position, board|
         board[position] = nil
     end
   end
@@ -43,12 +44,7 @@ class Board
     state[position]
   end
 
-  def horizontal
-    [ 
-      [0, 1, 2],
-      [3, 4, 5], 
-      [6, 7, 8] 
-    ].freeze
+  def row 
   end
 
   def vertical
