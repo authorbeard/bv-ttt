@@ -44,7 +44,9 @@ class Board
     state[position]
   end
 
-  def row 
+  def row(position)
+    float = (position / size.to_f)
+    position < size ? float.floor + 1 : float.ceil
   end
 
   def vertical

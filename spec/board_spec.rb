@@ -49,6 +49,15 @@ RSpec.describe "../lib/board.rb" do
       [7, 8, 9].each do |pos|
         expect(@board.row(pos)).to eq 3
       end
+
+      board = Board.new(5)
+      (1..5).to_a.each do |pos|
+        expect(board.row(pos)).to eq 1
+      end
+
+      (16..20).to_a.each do |pos|
+        expect(board.row(pos)).to eq 4
+      end
     end
 
     it "calculates the column for any position" do 

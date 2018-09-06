@@ -17,8 +17,10 @@ require "pry"
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 RSpec.configure do |config|
-  config.before(:all, &:silence_output)
-  config.after(:all, &:store_results)
+  # config.before(:all, &:silence_output)
+  # config.after(:all, &:enable_output)
+  # config.after(:all, &:store_results)
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
@@ -107,13 +109,27 @@ end
 public
 
 def silence_output
-  # Store the original stderr and stdout in order to restore them later
-  @original_stderr = $stderr
-  @original_stdout = $stdout
+  begin
+    original_stderr = $stderr.clone
+    original_stdout = $stdout.clone
+    $stderr.reopen(File.new('/dev/null', 'w'))
+    $stdout.reopen(File.new('/dev/null', 'w'))
+  rescue Exception => e
+    $stdout.reopen(original_stdout)
+    $stderr.reopen(original_stderr)
+    raise e
+  ensure
+    $stdout.reopen(original_stdout)
+    $stderr.reopen(original_stderr)
+  end
+end
 
-  # Redirect stderr and stdout
-  $stderr = File.new(File.join('./tmp', 'output.txt'), 'w')
-  $stdout = File.new(File.join('./tmp', 'output.txt'), 'w')
+def enable_output
+  $stderr = @original_stderr
+  $stdout = @original_stdout
+  @original_stderr = nil
+  @original_stdout = nil
+  
 end
 
 def store_results
