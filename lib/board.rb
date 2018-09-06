@@ -54,7 +54,7 @@ class Board
     mod == 0 ? size : mod
   end
 
-  def diagonal
-    [[0, 4, 8], [2, 4, 6]].freeze
+  def diag(position)
+    position < size ? "r_diag" : "l_diag"
   end
 end
