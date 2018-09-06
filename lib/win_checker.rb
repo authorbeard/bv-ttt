@@ -12,7 +12,7 @@ class WinChecker
   def initialize(board)
     @board  = board
     @winner = nil
-    @eliminated = {rows: [], cols: [], diags: []}
+    @eliminated = {horiz: [], vert: [], diag: []}
     @checked  = []
     @size   = board.size
   end
@@ -21,52 +21,22 @@ class WinChecker
     @winner = horizontal? || vertical? || diagonal?
   end
 
-  # def horizontal?
-  #   winner = board.horizontal.detect{|row| match?(row) }
-  #   winner.nil? ? false : board.player_at(winner.first)
-  # end
-
-  # def vertical?
-  #   winner = board.vertical.detect{|row| match?(row) }
-  #   winner.nil? ? false : board.player_at(winner.first)
-  # end
-
-  # def diagonal?
-  #   winner = board.diagonal.detect{|diag| match?(diag) }
-  #   winner.nil? ? false : board.player_at(winner.first)
-  # end
-
-  # def match?(positions)
-  #   players  = positions.map{|pos| board.player_at(pos) }.uniq
-  #   players.first.nil? ? false : players.length == 1
-  # end
-
-  # def draw?
-  #   eliminated = ["horizontal", "vertical", "diagonal"].map do |type|
-  #                   board.send(type).all? do |positions|
-  #                     players  = positions.map{|pos| board.player_at(pos) }.uniq
-  #                     players.compact.length > 1
-  #                   end
-  #                 end
-  #   @draw = eliminated.all?{|result| result == true }
-  # end
-
-  def traverse(pos, dir = nil)
-    @position = pos
+  def traverse(pos=nil, dir=nil)
+    @position = pos || 1
     @dir      = dir || "horiz"
-    reset_elim and return false unless should_continue?
+    reset and return false unless should_continue?
     puts "checking #{@position}"
 
-    if row_eliminated? && @dir == "horiz"
-      if @eliminated[:rows].last == @size
+    if horiz_eliminated? && @dir == "horiz"
+      if @eliminated[:horiz].last == @size
         traverse(next_col, "vert")
       else
         traverse(next_row)
       end
     end
 
-    if col_eliminated? && dir == "vert"
-      if @eliminated[:cols].last == @size
+    if vert_eliminated? && dir == "vert"
+      if @eliminated[:vert].last == @size
         traverse(1, "diag")
       else
         traverse(next_col, "vert")
@@ -74,57 +44,75 @@ class WinChecker
     end
 
     if diag_eliminated? && dir == "diag"
-      binding.pry
+      other_diag = diag == "l_diag" ? "r_diag" : "l_diag"
+      if @eliminated[:diag].include?(other_diag)
+        return false
+      else
+        binding.pry
+        traverse(@size, "diag")
+      end
     end
 
     if end_of_row?
-      binding.pry
       puts "end of row"
-      if !@checked.empty? && @checked.uniq!.count == @size
+      if !@checked.empty? && @checked.uniq.count == @size
         @winner = board.player_at(@checked.first)
         puts "Winner: #{@winner}"
         return true
       else
+        exit
         @checked.clear
         puts "moving down"
-        traverse(next_row, @size)
+        traverse(next_row, @dir)
       end
     end
 
+    if end_of_col?
+      puts "end of col"
+      if !@checked.empty? && @checked.uniq.count == @size
+        @winner = board.player_at(@checked.first)
+        puts "Winner: #{@winner}"
+        return true
+      else
+        @eliminated[@dir.to_sym] << send(@dir)
+        @checked.clear
+        puts "moving down"
+        traverse(next_pos, @dir)
+      end
+    end
+
+
     if board.player_at(@position) == board.player_at(next_pos)
-      binding.pry
       @checked << @position << next_pos
       traverse(next_pos, step_size[@dir])
     else
       @checked.clear if @checked
       puts "moving down"
-      if pos < @size
-        binding.pry
-        traverse(next_row, step_size[@dir.to_sym])
-      else
-        binding.pry
-      end
+      traverse(next_row, @dir)
     end
   end
 
   def next_row
-    row * @size + 1
+    horiz * @size + 1
   end
 
   def next_col
-    col + 1
+    vert + 1
   end
 
   def next_pos
-    next_step = step_size[@dir.to_sym] || step_size[diag.to_sym]
-    @position + next_step
+    next_step = step_size[@dir.to_sym] || step_size[diag.to_sym] if diag
+    if next_step.nil?
+      binding.pry
+    end
+    @position + next_step 
   end
 
-  def row
+  def horiz
     board.row(@position)
   end
 
-  def col
+  def vert
     board.col(@position)
   end
 
@@ -132,42 +120,43 @@ class WinChecker
     board.diag(@position)
   end
 
-  def l_diag
+  def end_of_row?
+    vert == @size
   end
 
-  def end_of_row?
-    @position % board.size == 0
+  def end_of_col?
+    horiz == @size
   end
 
   def should_continue?
     handle_nil
-    @winner.nil? && matches_possible? 
+    @winner.nil? && matches_possible? && board.valid_position?(@position)
   end
 
   def handle_nil
     if board.player_at(@position).nil?
-      @eliminated[:diags] << diag
-      @eliminated[:rows]  << row
-      @eliminated[:cols]  << col
+      @eliminated[:diag] << diag if diag
+      @eliminated[:horiz] << horiz
+      @eliminated[:vert]  << vert
       
       @eliminated.each{|k, v| v.uniq! }
     end
   end
 
-  def row_eliminated?
-    @eliminated[:rows].include?(row)
+  def horiz_eliminated?
+    @eliminated[:horiz].include?(send(@dir))
   end
 
-  def col_eliminated?
-    @eliminated[:cols].include?(row)
+  def vert_eliminated?
+    @eliminated[:vert].include?(send(@dir))
   end
 
   def diag_eliminated?
-    @eliminated[:diags].include?(diag)
+    @eliminated[:diag].include?(diag) if diag
   end
 
   def matches_possible?
-    @eliminated.none?{|k, v| v.count >= @size && v != :diags } || @eliminated[:diags].count < @size - 1
+    @eliminated.none?{|k, v| v.count >= @size && v != :diag } || @eliminated[:diag].count < @size - 1
   end
 
   def step_size
@@ -180,7 +169,7 @@ class WinChecker
   end
 
   def reset
-    @eliminated.each{|k, v| k.clear }
+    @eliminated.each{|k, v| v.clear }
     @checked.clear
   end
 end

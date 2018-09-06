@@ -55,6 +55,11 @@ class Board
   end
 
   def diag(position)
-    position < size ? "r_diag" : "l_diag"
+    side = position % size
+    if [1, 0].include?(side)
+      side == 0 ? "l_diag" : "r_diag"
+    else
+      nil
+    end
   end
 end
