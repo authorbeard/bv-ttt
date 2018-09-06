@@ -68,6 +68,15 @@ RSpec.describe "../lib/board.rb" do
       [3, 6, 9].each do |pos|
         expect(@board.col(pos)).to eq 3
       end
+
+      board = Board.new(5)
+      [1, 6, 11, 16, 21].to_a.each do |pos|
+        expect(board.col(pos)).to eq 1
+      end
+
+      [4, 9, 14, 19, 24].to_a.each do |pos|
+        expect(board.col(pos)).to eq 4
+      end
     end
   end
 end

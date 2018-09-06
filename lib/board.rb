@@ -49,12 +49,9 @@ class Board
     position < size ? float.floor + 1 : float.ceil
   end
 
-  def vertical
-    [
-      [0, 3, 6], 
-      [1, 4, 7],
-      [2, 5, 8]
-    ].freeze
+  def col(position)
+    mod = position % size
+    mod == 0 ? size : mod
   end
 
   def diagonal
