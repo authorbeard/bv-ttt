@@ -14,7 +14,7 @@ class Game
   end
 
   def over?
-    winner? || board.taken_spaces == board.size
+    winner? || draw?
   end
 
   def do_turn(selected_position = nil)
@@ -32,7 +32,7 @@ class Game
   end
 
   def draw?
-    turns_taken == 9
+    board.taken_spaces == board.positions.count
   end
 
   def set_players
@@ -56,9 +56,5 @@ class Game
 
   def first_turn?
     current_board.length == board.open_spaces.count
-  end
-
-  def turns_taken
-    board.taken_spaces.count + 1
   end
 end

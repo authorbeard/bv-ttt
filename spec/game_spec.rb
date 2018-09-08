@@ -70,14 +70,14 @@ RSpec.describe "./lib/game.rb" do
       describe "#over?" do 
         it "returns false if there haven't been enough moves to win" do 
           g = Game.new
-          allow_any_instance_of(Game).to receive(:turns_taken).and_return(4)
+          allow_any_instance_of(Board).to receive(:taken_spaces).and_return(4)
           allow_any_instance_of(Game).to receive(:winner?).and_return(false)
           expect(g.over?).to be false
         end
 
         it "checks for a winner if there have been enough moves" do 
           g = Game.new
-          allow_any_instance_of(Game).to receive(:turns_taken).and_return(7)
+          allow_any_instance_of(Board).to receive(:taken_spaces).and_return(7)
           allow_any_instance_of(Game).to receive(:draw?).and_return(true)
           expect(WinChecker).to receive(:winner?)
           g.over?
@@ -85,7 +85,7 @@ RSpec.describe "./lib/game.rb" do
 
         it "checks for a draw if there is no winner" do
           g = Game.new
-          allow_any_instance_of(Game).to receive(:turns_taken).and_return(7)
+          allow_any_instance_of(Board).to receive(:taken_spaces).and_return(7)
           allow_any_instance_of(Game).to receive(:winner?).and_return(false)
           expect_any_instance_of(Game).to receive(:draw?).and_return(false)
           g.over?
@@ -93,7 +93,7 @@ RSpec.describe "./lib/game.rb" do
 
         it "is true when all of the spaces are full" do 
           allow_any_instance_of(Game).to receive(:winner?).and_return(false)
-          allow_any_instance_of(Game).to receive(:turns_taken).and_return(9)
+          allow_any_instance_of(Board).to receive(:taken_spaces).and_return(9)
           g = Game.new
           expect(g.over?).to be true
         end
