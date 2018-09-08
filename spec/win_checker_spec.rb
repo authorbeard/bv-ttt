@@ -10,21 +10,13 @@ RSpec.describe "../lib/win_checker.rb" do
         expect(WinChecker.new(@board).winner?).to be_falsey
       end
 
-      it "handles a messy board with no winner" do 
+      it "handles a messy board with a horizontal winner" do 
         @board = Board.new
         [4, 5, 6].each{|pos| @board.update_state(pos, "O")}
-        [0, 3, 7].each{|pos| @board.update_state(pos, "X")}
+        [1, 3, 7].each{|pos| @board.update_state(pos, "X")}
 
-        svc = WinChecker.new(@board)
-        expect(svc.winner?).to be_falsey
-      end
-
-      it "returns false with only a vertical winner" do 
-        [4, 7, 1].each{|pos| @board.update_state(pos, "O")}
-        [0, 3, 2].each{|pos| @board.update_state(pos, "X")}
-        
-        svc = WinChecker.new(@board)
-        expect(svc.winner?).to be_falsey
+        winner = WinChecker.new(@board).traverse
+        expect(winner).to be_truthy
       end
 
       it "returns true for a match on any line" do 
@@ -36,31 +28,14 @@ RSpec.describe "../lib/win_checker.rb" do
         horizontal.each do |row|
           board_2 = Board.new
           row.each{|p| board_2.update_state(p, "O")}
-          svc = WinChecker.new(board_2)
-          expect(svc.winner?).to be_truthy
+          winner = WinChecker.new(board_2).traverse
+          expect(winner).to be_truthy
         end
       end
 
       it "returns false for an empty board" do 
-        svc = WinChecker.new(@board)
-        expect(svc.winner?).to be_falsey
-      end
-
-      it "handles a messy board with no winner" do 
-        @board = Board.new
-        [4, 5, 6].each{|pos| @board.update_state(pos, "O")}
-        [0, 3, 7].each{|pos| @board.update_state(pos, "X")}
-
-        svc = WinChecker.new(@board)
-        expect(svc.winner?).to be_falsey
-      end
-
-      it "returns false with only a horizontal winner" do 
-        [6, 7, 8].each{|pos| @board.update_state(pos, "O")}
-        [0, 3, 2].each{|pos| @board.update_state(pos, "X")}
-        
-        svc = WinChecker.new(@board)
-        expect(svc.winner?).to be_falsey
+        winner = WinChecker.new(@board).traverse
+        expect(winner).to be_falsey
       end
 
       it "returns true for a match on any line" do 
@@ -72,8 +47,8 @@ RSpec.describe "../lib/win_checker.rb" do
         vertical.each do |row|
           board_2 = Board.new
           row.each{|p| board_2.update_state(p, "O")}
-          svc = WinChecker.new(board_2)
-          expect(svc.winner?).to be_truthy
+          winner = WinChecker.new(board_2).traverse
+          expect(winner).to be_truthy
         end
       end
 
@@ -85,26 +60,18 @@ RSpec.describe "../lib/win_checker.rb" do
         diagonal.each do |row|
           board_2 = Board.new
           row.each{|p| board_2.update_state(p, "O")}
-          svc = WinChecker.new(board_2)
-          expect(svc.winner?).to be_truthy
+          winner = WinChecker.new(board_2).traverse
+          expect(winner).to be_truthy
         end
       end
 
       it "handles a messy board with no winner" do 
         @board = Board.new
-        [4, 5, 6].each{|pos| @board.update_state(pos, "O")}
-        [0, 3, 7].each{|pos| @board.update_state(pos, "X")}
+        [5, 3, 4].each{|pos| @board.update_state(pos, "O")}
+        [1, 7].each{|pos| @board.update_state(pos, "X")}
 
-        svc = WinChecker.new(@board)
-        expect(svc.winner?).to be_falsey
-      end
-
-      it "returns false with only a horizontal winner" do 
-        [6, 7, 8].each{|pos| @board.update_state(pos, "O")}
-        [0, 3, 2].each{|pos| @board.update_state(pos, "X")}
-        
-        svc = WinChecker.new(@board)
-        expect(svc.winner?).not_to be_truthy
+        winner = WinChecker.new(@board).traverse
+        expect(winner).to be_falsey
       end
   end
 end

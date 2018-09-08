@@ -32,11 +32,7 @@ class Game
   end
 
   def draw?
-    if turns_taken == 9
-      true
-    else
-      WinChecker.draw?(board)
-    end
+    turns_taken == 9
   end
 
   def set_players

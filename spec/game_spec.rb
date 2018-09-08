@@ -87,7 +87,7 @@ RSpec.describe "./lib/game.rb" do
           g = Game.new
           allow_any_instance_of(Game).to receive(:turns_taken).and_return(7)
           allow_any_instance_of(Game).to receive(:winner?).and_return(false)
-          expect(WinChecker).to receive(:draw?)
+          expect_any_instance_of(Game).to receive(:draw?).and_return(false)
           g.over?
         end
 
