@@ -12,54 +12,63 @@ class WinChecker
   def initialize(board)
     @board  = board
     @winner = nil
-    @eliminated = {horiz: [], vert: [], diag: [] }
+    @eliminated = {row: [], col: [], diag: [] }
     @matches  = []
   end
 
-  def winner?
-    @winner = horizontal? || vertical? || diagonal?
-  end
-
   def traverse(pos=nil, dir=nil)
-    puts "matches: #{@matches}"
     @position = pos || 1
     @dir      = dir || next_adjacent.shift
-    puts "checking #{@position}"
+
     if check
-      while @matches.count < size
+      if @winner
+        return @winner
+      else
         shift_to_adj_vars
-        traverse(@next, @dir)
+        traverse(@position, @dir)
       end
-        @winner = player_at(@matches.last)
-        return true
     else
+      @matches.clear
       move
     end
   end
 
-
   def check
+    return false unless should_continue? && avail?
+    @next = next_pos
     if player_at(@position).nil?
       @eliminated[@dir] |= [send(@dir)]
       return false
-    end 
-    @next = next_pos
-    @matches |= [@position, @next] if player_at(@position) == player_at(@next)
+    end
+    if player_at(@position) == player_at(@next) && board.valid_position?(@next)
+      @matches |= [@position, @next]
+      winner? || true
+    end
   end
 
   def move
+    return false unless should_continue? 
     @eliminated[@dir] |= [send(@dir)]
     @dir = next_adjacent.shift
     if @dir.nil?
       @adj = nil
-      @position += 1
+      if board.valid_position?(@position + 1) 
+        @position += 1 
+      else 
+        @position = 2
+      end
     end
     @next, @last = nil, nil
     traverse(@position, @dir)
   end
 
+  def winner?
+    @winner = @matches.count == @size ? player_at(@matches.first) : nil
+  end
+
   def shift_to_adj_vars
-    @last, @position, @next = @position, @next, next_pos
+    @last, @position = @position, @next
+    @next = next_pos
   end
 
   def clear_for_move
@@ -67,16 +76,21 @@ class WinChecker
     [@next, @last, @adj].map{|var| var = nil}
   end
 
-  def next_pos
+  def prev_pos
     next_step = step_size[@dir] || diag_step
-    @position + next_step
+    @position - next_step
   end
 
-  def horiz
+  def next_pos
+    next_step = step_size[@dir] || diag_step
+    @position + next_step 
+  end
+
+  def row
     board.row(@position)
   end
 
-  def vert
+  def col
     board.col(@position)
   end
 
@@ -88,7 +102,7 @@ class WinChecker
     if board.col(@position) == size
       size - 1
     else
-      adj = @last ? (vert - board.col(@last)) : 1
+      adj = @last ? (col - board.col(@last)) : 1
       size + adj
     end
   end
@@ -97,21 +111,10 @@ class WinChecker
     matches_possible? && board.valid_position?(@position)
   end
 
-  # def horiz_eliminated?
-  #   @eliminated[:horiz].include?(send(@dir))
-  # end
-
-  # def vert_eliminated?
-  #   @eliminated[:vert].include?(send(@dir))
-  # end
-
-  # def diag_eliminated?
-  #   if player_at(@position).nil?
-  #     @eliminated[:diag] |= [diag_dir]
-  #   else
-  #     player_at(@position) != player_at(next_pos)
-  #   end
-  # end
+  def avail?
+    true if @dir.nil?
+    !@eliminated[@dir].include?(send(@dir))
+  end
 
   def matches_possible?
     @eliminated.any? do |k, v| 
@@ -124,11 +127,11 @@ class WinChecker
   end
 
   def step_size
-    { horiz: 1, vert:  size }
+    { row: 1, col:  size }
   end
 
   def next_adjacent
-    @adj ||= [:horiz, :vert, :diag]
+    @adj ||= [:row, :col, :diag]
   end
 
   def reset
