@@ -53,8 +53,4 @@ class Board
     mod = position % size
     mod == 0 ? size : mod
   end
-
-  def diag(position)
-    binding.pry
-  end
 end

@@ -14,7 +14,7 @@ class Game
   end
 
   def over?
-    winner? || draw?
+    winner? || board.taken_spaces == board.size
   end
 
   def do_turn(selected_position = nil)

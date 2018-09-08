@@ -2,11 +2,7 @@ class WinChecker
   attr_reader :board, :winner, :draw, :eliminated
 
   def self.winner?(board)
-    new(board).tap{|svc| svc.winner?}.winner
-  end
-
-  def self.draw?(board)
-    new(board).tap{|svc| svc.draw?}.draw
+    new(board).tap{|svc| svc.winner?}.traverse
   end
 
   def initialize(board)
