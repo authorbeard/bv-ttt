@@ -53,13 +53,4 @@ class Board
     mod = position % size
     mod == 0 ? size : mod
   end
-
-  def diag(position)
-    side = position % size
-    if [1, 0].include?(side)
-      side == 0 ? "l_diag" : "r_diag"
-    else
-      nil
-    end
-  end
 end

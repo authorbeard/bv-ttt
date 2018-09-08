@@ -12,9 +12,8 @@ class WinChecker
   def initialize(board)
     @board  = board
     @winner = nil
-    @eliminated = {horiz: [], vert: [], diag: []}
-    @checked  = []
-    @size   = board.size
+    @eliminated = {horiz: [], vert: [], diag: [] }
+    @matches  = []
   end
 
   def winner?
@@ -22,90 +21,55 @@ class WinChecker
   end
 
   def traverse(pos=nil, dir=nil)
+    puts "matches: #{@matches}"
     @position = pos || 1
-    @dir      = dir || "horiz"
-    reset and return false unless should_continue?
+    @dir      = dir || next_adjacent.shift
     puts "checking #{@position}"
-
-    if horiz_eliminated? && @dir == "horiz"
-      if @eliminated[:horiz].last == @size
-        traverse(next_col, "vert")
-      else
-        traverse(next_row)
+    if check
+      while @matches.count < size
+        shift_to_adj_vars
+        traverse(@next, @dir)
       end
-    end
-
-    if vert_eliminated? && dir == "vert"
-      if @eliminated[:vert].last == @size
-        traverse(1, "diag")
-      else
-        traverse(next_col, "vert")
-      end
-    end
-
-    if diag_eliminated? && dir == "diag"
-      other_diag = diag == "l_diag" ? "r_diag" : "l_diag"
-      if @eliminated[:diag].include?(other_diag)
-        return false
-      else
-        binding.pry
-        traverse(@size, "diag")
-      end
-    end
-
-    if end_of_row?
-      puts "end of row"
-      if !@checked.empty? && @checked.uniq.count == @size
-        @winner = board.player_at(@checked.first)
-        puts "Winner: #{@winner}"
+        @winner = player_at(@matches.last)
         return true
-      else
-        exit
-        @checked.clear
-        puts "moving down"
-        traverse(next_row, @dir)
-      end
-    end
-
-    if end_of_col?
-      puts "end of col"
-      if !@checked.empty? && @checked.uniq.count == @size
-        @winner = board.player_at(@checked.first)
-        puts "Winner: #{@winner}"
-        return true
-      else
-        @eliminated[@dir.to_sym] << send(@dir)
-        @checked.clear
-        puts "moving down"
-        traverse(next_pos, @dir)
-      end
-    end
-
-
-    if board.player_at(@position) == board.player_at(next_pos)
-      @checked << @position << next_pos
-      traverse(next_pos, step_size[@dir])
     else
-      @checked.clear if @checked
-      puts "moving down"
-      traverse(next_row, @dir)
+      move
     end
   end
 
-  def next_row
-    horiz * @size + 1
+
+  def check
+    if player_at(@position).nil?
+      @eliminated[@dir] |= [send(@dir)]
+      return false
+    end 
+    @next = next_pos
+    @matches |= [@position, @next] if player_at(@position) == player_at(@next)
   end
 
-  def next_col
-    vert + 1
+  def move
+    @eliminated[@dir] |= [send(@dir)]
+    @dir = next_adjacent.shift
+    if @dir.nil?
+      @adj = nil
+      @position += 1
+    end
+    @next, @last = nil, nil
+    traverse(@position, @dir)
+  end
+
+  def shift_to_adj_vars
+    @last, @position, @next = @position, @next, next_pos
+  end
+
+  def clear_for_move
+    @position = @position + 1
+    [@next, @last, @adj].map{|var| var = nil}
   end
 
   def next_pos
-    next_step = step_size[@dir.to_sym] || step_size[diag.to_sym] if diag
-    if next_step.nil?
-      binding.pry
-    end
-    @position + next_step 
+    next_step = step_size[@dir] || diag_step
+    @position + next_step
   end
 
   def horiz
@@ -117,59 +81,66 @@ class WinChecker
   end
 
   def diag
-    board.diag(@position)
+    diag_step
   end
 
-  def end_of_row?
-    vert == @size
-  end
-
-  def end_of_col?
-    horiz == @size
-  end
-
-  def should_continue?
-    handle_nil
-    @winner.nil? && matches_possible? && board.valid_position?(@position)
-  end
-
-  def handle_nil
-    if board.player_at(@position).nil?
-      @eliminated[:diag] << diag if diag
-      @eliminated[:horiz] << horiz
-      @eliminated[:vert]  << vert
-      
-      @eliminated.each{|k, v| v.uniq! }
+  def diag_step
+    if board.col(@position) == size
+      size - 1
+    else
+      adj = @last ? (vert - board.col(@last)) : 1
+      size + adj
     end
   end
 
-  def horiz_eliminated?
-    @eliminated[:horiz].include?(send(@dir))
+  def should_continue?
+    matches_possible? && board.valid_position?(@position)
   end
 
-  def vert_eliminated?
-    @eliminated[:vert].include?(send(@dir))
-  end
+  # def horiz_eliminated?
+  #   @eliminated[:horiz].include?(send(@dir))
+  # end
 
-  def diag_eliminated?
-    @eliminated[:diag].include?(diag) if diag
-  end
+  # def vert_eliminated?
+  #   @eliminated[:vert].include?(send(@dir))
+  # end
+
+  # def diag_eliminated?
+  #   if player_at(@position).nil?
+  #     @eliminated[:diag] |= [diag_dir]
+  #   else
+  #     player_at(@position) != player_at(next_pos)
+  #   end
+  # end
 
   def matches_possible?
-    @eliminated.none?{|k, v| v.count >= @size && v != :diag } || @eliminated[:diag].count < @size - 1
+    @eliminated.any? do |k, v| 
+      if k == :diag
+        v.count < 2
+      else
+        v.count < size 
+      end
+    end
   end
 
   def step_size
-    {
-      horiz:  1,
-      vert:   3,
-      r_diag: @size + 1,
-      l_diag: @size - 1 
-    }
+    { horiz: 1, vert:  size }
+  end
+
+  def next_adjacent
+    @adj ||= [:horiz, :vert, :diag]
   end
 
   def reset
     @eliminated.each{|k, v| v.clear }
-    @checked.clear
+    @matches.clear
+  end
+
+  def player_at(position)
+    board.player_at(position)
+  end
+
+  def size
+    @size ||= board.size
   end
 end
