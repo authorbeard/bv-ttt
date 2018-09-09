@@ -1,16 +1,19 @@
 class Game
   attr_accessor :board, :players, :type, :winner, :current_player, :last_player
 
-  def initialize(type="pvc")
+  def initialize(game_type="1")
     @board   = Board.new
-    @players = initialize_players
-    @type    = type
+    @players = initialize_players(game_type)
     set_players
   end
 
 
-  def initialize_players
-    [Player.new(piece: "X"), Player.new(piece: "O")]
+  def initialize_players(game_type)
+    if game_type == "1"
+      [Human.new(piece: "X"), Computer.new(piece: "O")]
+    else
+      [Human.new(piece: "X"), Human.new(piece: "O")]
+    end
   end
 
   def over?
@@ -18,8 +21,8 @@ class Game
   end
 
   def do_turn(selected_position = nil)
-    position = selected_position || STDIN.gets.strip.to_i - 1
-    MoveService.make_move(board, position, current_player)
+    chosen_pos = current_player.choose_move(board)
+    MoveService.make_move(board, chosen_pos, current_player)
     toggle_players
   end
 
@@ -40,6 +43,13 @@ class Game
     players         = @players.dup
     @current_player = players.slice!(first_index, 1).first
     @last_player    = players.shift
+  end
+
+  def update_players
+    player_names = STDIN.gets.strip.split(",")
+    players.each_with_index do |player, i| 
+      player.name = player_names[i] unless player_names[i].nil?
+    end
   end
 
   def toggle_players

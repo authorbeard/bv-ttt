@@ -13,7 +13,7 @@ class Board
   end
 
   def positions
-    @positions ||= state.keys
+    state.keys
   end
 
   def update_state(position, player_piece)
@@ -33,7 +33,7 @@ class Board
   end
 
   def open_spaces
-    state.select{|position, piece| piece.nil? }
+    state.select{|position, piece| piece.nil? }.keys
   end
 
   def taken_spaces

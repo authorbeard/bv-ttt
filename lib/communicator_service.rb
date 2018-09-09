@@ -9,14 +9,14 @@ class CommunicatorService
       border].join.freeze
   end
 
-  def player_name_menu
+  def player_menu_1
     [ border, 
       "Okay, waddaya wanna be called?.\n",
       "(just hit enter if yer fine with a default name\n",
       border].join.freeze
   end
 
-  def player_options_menu
+  def player_menu_2
     [ border, 
       "This is real easy.\n",
       "Type in two names, separated by a comma:\n",
@@ -27,27 +27,27 @@ class CommunicatorService
       border].join.freeze
   end
 
-  def computer_turn(board, position)
-    board = format_board(board.dup)
-    [ board, 
-      "Computer selects #{position + 1}"
-    ].join.freeze
+  def computer_turn(position)
+    "Computer selects #{position}"
   end
 
   def next_turn(game)
-    board = format_board(game.current_board.dup)
+    board = format_board(game.board)
     [ board,
       "Your turn, #{game.current_player.name}. Pick a space.\n\n"].join.freeze
   end
 
   def format_board(board)
-    board.each{|k,v| v.nil? ? board[k] = k + 1 : next}
-    [ "#{board[0]} | #{board[1]} | #{board[2]}\n", 
-      divider,
-      "#{board[3]} | #{board[4]} | #{board[5]}\n",
-      divider,
-      "#{board[6]} | #{board[7]} | #{board[8]}\n\n"
-    ].join
+    display_board = []
+    keys = board.positions
+
+    until keys.empty?
+      row = keys.shift(board.size)
+      row.map!{|k| "#{board.state[k] || k } | " }
+      display_board << row.join.chomp("|") << "\n#{divider}"
+    end
+
+    display_board.join.chomp(divider)
   end
 
   def game_over(message)
@@ -64,6 +64,6 @@ class CommunicatorService
   end
 
   def divider
-    "--------\n".freeze
+    "----------\n".freeze
   end
 end

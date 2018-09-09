@@ -8,8 +8,8 @@ RSpec.describe "./lib/game.rb" do
         initial_state = (0..8).to_a.map{|i| empty[i]}
         empty_board = double(state: empty)
         allow(Board).to receive(:new).and_return(empty_board)
-        @player_x = double("player_x", piece: "X")
-        @player_o = double("player_o", piece: "O")
+        @player_x = double("player_x", piece: "X", choose_move: "1")
+        @player_o = double("player_o", piece: "O", choose_move: "2")
         allow_any_instance_of(Game).to receive(:initialize_players).and_return([@player_x, @player_o])
         @game = Game.new
       end
@@ -26,29 +26,15 @@ RSpec.describe "./lib/game.rb" do
         expect([@player_x, @player_o].all?{|p| players.include?(p)}).to be true
       end
 
-      it "initializes with a game type" do 
-        expect(@game.type).not_to be nil
-      end
-
-      it "can be initialized as player-vs-player" do 
-        expect(Game.new("pvp").type).to eq("pvp")
-      end
-
-      it "can be initialized as player-vs-computer" do 
-        expect(Game.new("pvc").type).to eq("pvc")
+      xit "initializes with a computer player for game type 1" do 
+        game = Game.new
+        expect(players.count).to eq 2
+        compy = game.players.select{|p| p.is_a?(Computer)}
+        expect(compy).to be true
       end
     end
 
     context "gameplay" do 
-      it "sets the current player" do 
-        allow(STDIN).to receive(:gets).and_return("5")
-        g = Game.new
-        allow(g.board).to receive(:open_spaces).and_return(0)
-        allow(MoveService).to receive(:make_move).with(any_args).and_return("")
-        expect_any_instance_of(Game).to receive(:current_player)
-        g.do_turn
-      end
-
       it "randomly selects the first player" do
         allow_any_instance_of(Game).to receive(:first_turn?).and_return(true) 
         first_5 = []
@@ -101,11 +87,11 @@ RSpec.describe "./lib/game.rb" do
 
       describe "#do_turn" do 
         it "updates the board" do 
-          player = Player.new
+          player = Computer.new
           allow(STDIN).to receive(:gets).and_return("1\n")
           allow_any_instance_of(Game).to receive(:current_player).and_return(player)
           g = Game.new
-          expect(MoveService).to receive(:make_move).with(g.board, 0, player)
+          expect(MoveService).to receive(:make_move).with(g.board, 1, player)
           g.do_turn
         end
 
